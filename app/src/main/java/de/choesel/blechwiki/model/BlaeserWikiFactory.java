@@ -1,5 +1,7 @@
 package de.choesel.blechwiki.model;
 
+import android.util.Log;
+
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
@@ -20,6 +22,8 @@ public final class BlaeserWikiFactory {
 
     private static final String SOAP_ACTION_GET_BUECHER = "http://pcportal.ddns.net/GetBücher";
     private static final String METHOD_NAME_GET_BUECHER = "GetBücher";
+    private static final String SOAP_ACTION_GET_KOMPONISTEN = "http://pcportal.ddns.net/GetKomponisten";
+    private static final String METHOD_NAME_GET_KOMPONISTEN = "GetKomponisten";
     private static final String NAMESPACE = "http://pcportal.ddns.net/";
     private static final String URL = "http://pcportal.ddns.net/LiteraService/service1.asmx?WSDL";
 
@@ -76,6 +80,57 @@ public final class BlaeserWikiFactory {
 
 
         return buchList;
+    }
+
+
+    public static List<Komponist> getKomponisten() {
+        List<Komponist> komponistenList = new ArrayList<>();
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_GET_KOMPONISTEN);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
+        envelope.implicitTypes = true;
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE httpTransport = new HttpTransportSE(URL);
+
+        httpTransport.debug = true;
+        try {
+            httpTransport.call(SOAP_ACTION_GET_KOMPONISTEN, envelope);
+        } catch (HttpResponseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } //send request
+        SoapObject result = null;
+        try {
+            result = (SoapObject) envelope.getResponse();
+        } catch (SoapFault e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < result.getPropertyCount(); i++) {
+            SoapObject property = (SoapObject) result.getProperty(i);
+            Log.d("Komponisten", property.toString());
+            if (property.hasProperty("NewDataSet")) {
+                Log.d("Komponisten", property.toString());
+                SoapObject dataSet = (SoapObject) property.getPropertySafely("NewDataSet");
+                for (int j = 0; j < dataSet.getPropertyCount(); j++) {
+                    SoapObject vBuecher = (SoapObject) dataSet.getProperty(j);
+                    komponistenList.add(new Komponist(vBuecher));
+                }
+            }
+        }
+
+
+        return komponistenList;
     }
 
 

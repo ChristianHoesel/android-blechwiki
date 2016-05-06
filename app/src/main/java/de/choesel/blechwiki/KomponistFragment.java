@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import de.choesel.blechwiki.model.BlaeserWikiFactory;
 import de.choesel.blechwiki.model.Buch;
+import de.choesel.blechwiki.model.Komponist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,43 +24,41 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class BuchFragment extends Fragment {
-
-    private BuchRecyclerViewAdapter buchRecyclerViewAdapter;
-    private RecyclerView recyclerView;
-
-    private class myAsyncTask extends AsyncTask<Void, Void, List<Buch>> {
-
-
-        @Override
-        protected void onPostExecute(List<Buch> result) {
-            super.onPostExecute(result);
-            recyclerView.setAdapter(new BuchRecyclerViewAdapter(result, mListener));
-        }
-
-        @Override
-        protected List<Buch> doInBackground(Void... arg0) {
-            return BlaeserWikiFactory.getBuecher();
-        }
-    }
+public class KomponistFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private RecyclerView recyclerView;
+
+    private class myAsyncTask extends AsyncTask<Void, Void, List<Komponist>> {
+
+
+        @Override
+        protected void onPostExecute(List<Komponist> result) {
+            super.onPostExecute(result);
+            recyclerView.setAdapter(new KomponistRecyclerViewAdapter(result, mListener));
+        }
+
+        @Override
+        protected List<Komponist> doInBackground(Void... arg0) {
+            return BlaeserWikiFactory.getKomponisten();
+        }
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public BuchFragment() {
+    public KomponistFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static BuchFragment newInstance(int columnCount) {
-        BuchFragment fragment = new BuchFragment();
+    public static KomponistFragment newInstance(int columnCount) {
+        KomponistFragment fragment = new KomponistFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -78,7 +77,7 @@ public class BuchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_buch_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_komponist_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -89,14 +88,11 @@ public class BuchFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            buchRecyclerViewAdapter = new BuchRecyclerViewAdapter(new ArrayList<Buch>(), mListener);
-
-            recyclerView.setAdapter(buchRecyclerViewAdapter);
+            recyclerView.setAdapter(new KomponistRecyclerViewAdapter(new ArrayList<Komponist>(), mListener));
         }
 
         myAsyncTask myRequest = new myAsyncTask();
         myRequest.execute();
-
         return view;
     }
 
@@ -130,6 +126,6 @@ public class BuchFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Buch item);
+        void onListFragmentInteraction(Komponist item);
     }
 }

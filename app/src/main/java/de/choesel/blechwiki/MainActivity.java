@@ -19,8 +19,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import de.choesel.blechwiki.model.Buch;
+import de.choesel.blechwiki.model.Komponist;
 
-public class MainActivity extends AppCompatActivity implements BuchFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements BuchFragment.OnListFragmentInteractionListener, KomponistFragment.OnListFragmentInteractionListener {
 
 
 
@@ -94,6 +95,11 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
 
     }
 
+    @Override
+    public void onListFragmentInteraction(Komponist item) {
+
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -146,6 +152,8 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
             switch (position) {
                 case 0:
                     return BuchFragment.newInstance(1);
+                case 1:
+                    return KomponistFragment.newInstance(1);
                 default:
                     return PlaceholderFragment.newInstance(position + 1);
             }
@@ -163,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
                 case 0:
                     return "Bücher";
                 case 1:
-                    return "SECTION 2";
+                    return "Komponisten";
                 case 2:
                     return "SECTION 3";
             }
