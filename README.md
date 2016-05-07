@@ -1,2 +1,2 @@
 # android-blechwiki
-Android App für das BlechWiki - http://teddymuetze.ddns.net/BlechWiki/literaturdatenbank.html
+Android Spielerei mit dem BlechWiki - http://teddymuetze.ddns.net/BlechWiki/literaturdatenbank.html
