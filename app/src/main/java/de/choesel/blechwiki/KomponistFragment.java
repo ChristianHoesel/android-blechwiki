@@ -44,6 +44,7 @@ public class KomponistFragment extends Fragment {
 
         @Override
         protected List<Komponist> doInBackground(Void... arg0) {
+//            BlaeserWikiFactory.getTitel("A");
             return BlaeserWikiFactory.getKomponisten();
         }
     }
