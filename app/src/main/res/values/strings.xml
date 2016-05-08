@@ -2,4 +2,7 @@
     <string name="app_name">BlechWiki</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="search_title">Suche</string>
+    <string name="search_hint">Hinweise</string>
+    <string name="title_activity_search_results">SearchResultsActivity</string>
 </resources>
