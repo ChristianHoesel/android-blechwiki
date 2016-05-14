@@ -46,15 +46,16 @@ public final class BlaeserWikiFactory {
         List<Buch> buchList = new ArrayList<>();
 
         SoapObject result = getExecuteSoapRequest(METHOD_NAME_GET_BUECHER, SOAP_ACTION_GET_BUECHER);
+        if (result != null) {
+            for (int i = 0; i < result.getPropertyCount(); i++) {
+                SoapObject property = (SoapObject) result.getProperty(i);
+                if (property.hasProperty("NewDataSet")) {
 
-        for (int i = 0; i < result.getPropertyCount(); i++) {
-            SoapObject property = (SoapObject) result.getProperty(i);
-            if (property.hasProperty("NewDataSet")) {
-
-                SoapObject dataSet = (SoapObject) property.getPropertySafely("NewDataSet");
-                for (int j = 0; j < dataSet.getPropertyCount(); j++) {
-                    SoapObject vBuecher = (SoapObject) dataSet.getProperty(j);
-                    buchList.add(new Buch(vBuecher));
+                    SoapObject dataSet = (SoapObject) property.getPropertySafely("NewDataSet");
+                    for (int j = 0; j < dataSet.getPropertyCount(); j++) {
+                        SoapObject vBuecher = (SoapObject) dataSet.getProperty(j);
+                        buchList.add(new Buch(vBuecher));
+                    }
                 }
             }
         }
@@ -68,16 +69,17 @@ public final class BlaeserWikiFactory {
         List<Komponist> komponistenList = new ArrayList<>();
 
         SoapObject result = getExecuteSoapRequest(METHOD_NAME_GET_KOMPONISTEN, SOAP_ACTION_GET_KOMPONISTEN);
-
-        for (int i = 0; i < result.getPropertyCount(); i++) {
-            SoapObject property = (SoapObject) result.getProperty(i);
-            Log.d("Komponisten", property.toString());
-            if (property.hasProperty("NewDataSet")) {
+        if (result != null) {
+            for (int i = 0; i < result.getPropertyCount(); i++) {
+                SoapObject property = (SoapObject) result.getProperty(i);
                 Log.d("Komponisten", property.toString());
-                SoapObject dataSet = (SoapObject) property.getPropertySafely("NewDataSet");
-                for (int j = 0; j < dataSet.getPropertyCount(); j++) {
-                    SoapObject vBuecher = (SoapObject) dataSet.getProperty(j);
-                    komponistenList.add(new Komponist(vBuecher));
+                if (property.hasProperty("NewDataSet")) {
+                    Log.d("Komponisten", property.toString());
+                    SoapObject dataSet = (SoapObject) property.getPropertySafely("NewDataSet");
+                    for (int j = 0; j < dataSet.getPropertyCount(); j++) {
+                        SoapObject vBuecher = (SoapObject) dataSet.getProperty(j);
+                        komponistenList.add(new Komponist(vBuecher));
+                    }
                 }
             }
         }

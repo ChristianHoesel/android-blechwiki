@@ -12,8 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.choesel.blechwiki.model.BlaeserWikiFactory;
-import de.choesel.blechwiki.model.Buch;
 import de.choesel.blechwiki.model.Komponist;
+import de.choesel.blechwiki.orm.BlechWikiRepository;
+import de.choesel.blechwiki.orm.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,15 @@ public class KomponistFragment extends Fragment {
         @Override
         protected List<Komponist> doInBackground(Void... arg0) {
 //            BlaeserWikiFactory.getTitel("A");
-            return BlaeserWikiFactory.getKomponisten();
+            List<Komponist> komponisten = BlaeserWikiFactory.getKomponisten();
+
+            DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
+            BlechWikiRepository blechWikiRepository = new BlechWikiRepository(databaseHelper);
+            for(Komponist k : komponisten){
+                blechWikiRepository.saveOrUpdateKomponist(k);
+            }
+            databaseHelper.close();
+            return komponisten;
         }
     }
 

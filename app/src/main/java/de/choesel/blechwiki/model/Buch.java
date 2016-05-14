@@ -1,5 +1,8 @@
 package de.choesel.blechwiki.model;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -8,20 +11,44 @@ import org.ksoap2.serialization.SoapPrimitive;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.UUID;
+
+import de.choesel.blechwiki.orm.URLType;
 
 /**
  * Created by christian on 05.05.16.
  */
+@DatabaseTable(tableName = "buch")
 public class Buch implements KvmSerializable {
 
+    @DatabaseField(generatedId = true)
+    private UUID id;
+
+    @DatabaseField(canBeNull = true)
     private String buchId;
+
+    @DatabaseField(canBeNull = true)
     private String titel;
+
+    @DatabaseField(canBeNull = true)
     private String untertitel;
+
+    @DatabaseField(canBeNull = true)
     private int erscheinjahr;
+
+    @DatabaseField(canBeNull = true)
     private String herausgeber;
+
+    @DatabaseField(canBeNull = true)
     private String herausgeberVorname;
+
+    @DatabaseField(canBeNull = true)
     private String verlag;
+
+    @DatabaseField(canBeNull = true)
     private String verlagsnummer;
+
+    @DatabaseField(persisterClass = URLType.class)
     private URL imgURL;
 
 
@@ -261,5 +288,49 @@ public class Buch implements KvmSerializable {
 
     public URL getImgURL() {
         return imgURL;
+    }
+
+    public void setBuchId(String buchId) {
+        this.buchId = buchId;
+    }
+
+    public void setTitel(String titel) {
+        this.titel = titel;
+    }
+
+    public void setUntertitel(String untertitel) {
+        this.untertitel = untertitel;
+    }
+
+    public void setErscheinjahr(int erscheinjahr) {
+        this.erscheinjahr = erscheinjahr;
+    }
+
+    public void setHerausgeber(String herausgeber) {
+        this.herausgeber = herausgeber;
+    }
+
+    public void setHerausgeberVorname(String herausgeberVorname) {
+        this.herausgeberVorname = herausgeberVorname;
+    }
+
+    public void setVerlag(String verlag) {
+        this.verlag = verlag;
+    }
+
+    public void setVerlagsnummer(String verlagsnummer) {
+        this.verlagsnummer = verlagsnummer;
+    }
+
+    public void setImgURL(URL imgURL) {
+        this.imgURL = imgURL;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

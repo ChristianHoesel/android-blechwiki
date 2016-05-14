@@ -1,5 +1,8 @@
 package de.choesel.blechwiki.model;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import org.ksoap2.serialization.KvmSerializable;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -8,16 +11,27 @@ import org.ksoap2.serialization.SoapPrimitive;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.UUID;
 
 /**
  * Created by christian on 05.05.16.
  */
+@DatabaseTable(tableName = "komponist")
 public class Komponist implements KvmSerializable {
 
-    private String id;
+    @DatabaseField(generatedId = true)
+    private UUID id;
+
+    @DatabaseField(canBeNull = true)
     private String name;
+
+    @DatabaseField(canBeNull = true)
     private String kurzname;
+
+    @DatabaseField(canBeNull = true)
     private Integer geboren;
+
+    @DatabaseField(canBeNull = true)
     private Integer gestorben;
 
 
@@ -33,7 +47,6 @@ public class Komponist implements KvmSerializable {
             if (obj.getClass().equals(SoapPrimitive.class)) {
                 SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Komponist");
                 name = j0.toString();
-                id = j0.toString();
             }
         }
         if (soapObject.hasProperty("kurz")) {
@@ -136,7 +149,7 @@ public class Komponist implements KvmSerializable {
         }
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -154,5 +167,25 @@ public class Komponist implements KvmSerializable {
 
     public Integer getGestorben() {
         return gestorben;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setKurzname(String kurzname) {
+        this.kurzname = kurzname;
+    }
+
+    public void setGeboren(Integer geboren) {
+        this.geboren = geboren;
+    }
+
+    public void setGestorben(Integer gestorben) {
+        this.gestorben = gestorben;
     }
 }

@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 
 import de.choesel.blechwiki.model.BlaeserWikiFactory;
 import de.choesel.blechwiki.model.Buch;
+import de.choesel.blechwiki.orm.BlechWikiRepository;
+import de.choesel.blechwiki.orm.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,15 @@ public class BuchFragment extends Fragment {
 
         @Override
         protected List<Buch> doInBackground(Void... arg0) {
-            return BlaeserWikiFactory.getBuecher();
+
+            List<Buch> buecher = BlaeserWikiFactory.getBuecher();
+            DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
+            BlechWikiRepository blechWikiRepository = new BlechWikiRepository(databaseHelper);
+            for(Buch b : buecher){
+                blechWikiRepository.saveOrUpdateBuch(b);
+            }
+            databaseHelper.close();
+            return buecher;
         }
     }
 
