@@ -7,9 +7,11 @@ import com.j256.ormlite.dao.Dao;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import de.choesel.blechwiki.model.Buch;
 import de.choesel.blechwiki.model.Komponist;
+import de.choesel.blechwiki.model.Titel;
 
 /**
  * Created by Christian on 14.05.2016.
@@ -19,10 +21,13 @@ public class BlechWikiRepository {
 
     private Dao<Buch, Integer> buchDao;
     private Dao<Komponist, Integer> komponistDao;
+    private Dao<Titel, Integer> titelDao;
 
     public BlechWikiRepository(final DatabaseHelper databaseHelper) {
-        this.komponistDao = getKomponistDao(databaseHelper);
-        this.buchDao = getBuchDao(databaseHelper);
+        komponistDao = getKomponistDao(databaseHelper);
+        buchDao = getBuchDao(databaseHelper);
+        titelDao = getTitelDao(databaseHelper);
+
     }
 
     public void clearData() {
@@ -34,7 +39,7 @@ public class BlechWikiRepository {
 
     public List<Komponist> getKomponisten() {
         try {
-            return this.komponistDao.queryForAll();
+            return komponistDao.queryForAll();
         }
         catch (final SQLException e) {
             e.printStackTrace();
@@ -42,11 +47,29 @@ public class BlechWikiRepository {
         return new ArrayList<Komponist>();
     }
 
+    public List<Buch> getBuecher() {
+        try {
+            return buchDao.queryForAll();
+        }
+        catch (final SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<Buch>();
+    }
+
     public void saveOrUpdateKomponist(final Komponist komponist) {
         try {
             this.komponistDao.createOrUpdate(komponist);
         }
         catch (final SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveOrUpdateTitel(final Titel titel){
+        try{
+            titelDao.createOrUpdate(titel);
+        }catch (final SQLException e){
             e.printStackTrace();
         }
     }
@@ -75,28 +98,41 @@ public class BlechWikiRepository {
     }
 
     private Dao<Komponist, Integer> getKomponistDao(final DatabaseHelper databaseHelper) {
-        if (null == this.komponistDao) {
+        if (null == komponistDao) {
             try {
-                this.komponistDao = databaseHelper.getKomponistDao();
+                komponistDao = databaseHelper.getKomponistDao();
             }
             catch (final SQLException e) {
                 Log.e(LOG_TAG, "Unable to load DAO: " + e.getMessage());
                 e.printStackTrace();
             }
         }
-        return this.komponistDao;
+        return komponistDao;
     }
 
     private Dao<Buch, Integer> getBuchDao(final DatabaseHelper databaseHelper) {
-        if (null == this.buchDao) {
+        if (null == buchDao) {
             try {
-                this.buchDao = databaseHelper.getBuchDao();
+                buchDao = databaseHelper.getBuchDao();
             }
             catch (final SQLException e) {
                 Log.e(LOG_TAG, "Unable to load DAO: " + e.getMessage());
                 e.printStackTrace();
             }
         }
-        return this.buchDao;
+        return buchDao;
+    }
+
+    private  Dao<Titel, Integer> getTitelDao(final DatabaseHelper databaseHelper){
+        if (null == titelDao) {
+            try {
+                titelDao = databaseHelper.getTitelDao();
+            }
+            catch (final SQLException e) {
+                Log.e(LOG_TAG, "Unable to load DAO: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        return titelDao;
     }
 }

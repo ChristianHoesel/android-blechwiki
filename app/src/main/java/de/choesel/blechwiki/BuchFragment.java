@@ -32,24 +32,19 @@ public class BuchFragment extends Fragment {
 
     private class myAsyncTask extends AsyncTask<Void, Void, List<Buch>> {
 
+        DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
 
         @Override
         protected void onPostExecute(List<Buch> result) {
             super.onPostExecute(result);
+            databaseHelper.close();
             recyclerView.setAdapter(new BuchRecyclerViewAdapter(result, mListener));
         }
 
         @Override
         protected List<Buch> doInBackground(Void... arg0) {
-
-            List<Buch> buecher = BlaeserWikiFactory.getBuecher();
-            DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
             BlechWikiRepository blechWikiRepository = new BlechWikiRepository(databaseHelper);
-            for(Buch b : buecher){
-                blechWikiRepository.saveOrUpdateBuch(b);
-            }
-            databaseHelper.close();
-            return buecher;
+            return blechWikiRepository.getBuecher();
         }
     }
 

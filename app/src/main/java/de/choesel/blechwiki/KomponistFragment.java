@@ -36,25 +36,18 @@ public class KomponistFragment extends Fragment {
 
     private class myAsyncTask extends AsyncTask<Void, Void, List<Komponist>> {
 
-
+        DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
         @Override
         protected void onPostExecute(List<Komponist> result) {
             super.onPostExecute(result);
             recyclerView.setAdapter(new KomponistRecyclerViewAdapter(result, mListener));
+            databaseHelper.close();
         }
 
         @Override
         protected List<Komponist> doInBackground(Void... arg0) {
-//            BlaeserWikiFactory.getTitel("A");
-            List<Komponist> komponisten = BlaeserWikiFactory.getKomponisten();
-
-            DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
             BlechWikiRepository blechWikiRepository = new BlechWikiRepository(databaseHelper);
-            for(Komponist k : komponisten){
-                blechWikiRepository.saveOrUpdateKomponist(k);
-            }
-            databaseHelper.close();
-            return komponisten;
+            return blechWikiRepository.getKomponisten();
         }
     }
 

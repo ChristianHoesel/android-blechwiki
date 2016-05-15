@@ -14,7 +14,9 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by christian on 06.05.16.
@@ -86,6 +88,62 @@ public final class BlaeserWikiFactory {
         return komponistenList;
     }
 
+
+    public static Set<String> getTitelNamen(final String suchstring) {
+        Set<String> titelList = new HashSet<>();
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_GET_TITEL);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
+        envelope.implicitTypes = true;
+        envelope.dotNet = true;
+        request.addProperty("Suchstring", suchstring);
+        envelope.setOutputSoapObject(request);
+
+        HttpTransportSE httpTransport = new HttpTransportSE(URL);
+
+        httpTransport.debug = true;
+        try {
+            httpTransport.call(SOAP_ACTION_GET_TITEL, envelope);
+        } catch (HttpResponseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } //send request
+        SoapObject result = null;
+        try {
+            result = (SoapObject) envelope.getResponse();
+            for (int i = 0; i < result.getPropertyCount(); i++) {
+                SoapObject property = (SoapObject) result.getProperty(i);
+                Log.d("Titel", property.toString());
+                if (property.hasProperty("NewDataSet")) {
+                    Log.d("Titel", property.toString());
+                    SoapObject dataSet = (SoapObject) property.getPropertySafely("NewDataSet");
+                    for (int j = 0; j < dataSet.getPropertyCount(); j++) {
+                        SoapObject titel = (SoapObject) dataSet.getProperty(j);
+                        if (titel.hasProperty("TITEL")) {
+                            Object obj = titel.getProperty("TITEL");
+                            if (obj.getClass().equals(SoapPrimitive.class)) {
+                                SoapPrimitive j0 = (SoapPrimitive) titel.getProperty("TITEL");
+                                titelList.add(j0.toString());
+                            }
+                        }
+
+                    }
+                }
+            }
+        } catch (SoapFault e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return titelList;
+    }
+
     public static List<Titel> getTitel(final String suchstring) {
         List<Titel> titelList = new ArrayList<>();
 
@@ -138,13 +196,11 @@ public final class BlaeserWikiFactory {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-
         return titelList;
     }
 
 
-    private static List<Titel> getFundStellen(final String titelName) {
+    public static List<Titel> getFundStellen(final String titelName) {
         List<Titel> titelListe = new ArrayList<>();
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_GET_TITEL_FUNDSTELLE);
