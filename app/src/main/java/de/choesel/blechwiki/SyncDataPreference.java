@@ -66,7 +66,7 @@ public class SyncDataPreference extends DialogPreference {
 
             for (String s : BlaeserWikiFactory.getTitelNamen("")) {
                 Log.d("Titel",s);
-                for (Titel t : BlaeserWikiFactory.getFundStellen(s)) {
+                for (Titel t : BlaeserWikiFactory.getFundStellen(s,databaseHelper)) {
                     blechWikiRepository.saveOrUpdateTitel(t);
                     publishProgress(t);
                     if (isCancelled()) {

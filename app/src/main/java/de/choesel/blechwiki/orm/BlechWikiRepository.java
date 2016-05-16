@@ -40,8 +40,7 @@ public class BlechWikiRepository {
     public List<Komponist> getKomponisten() {
         try {
             return komponistDao.queryForAll();
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
         return new ArrayList<Komponist>();
@@ -50,8 +49,7 @@ public class BlechWikiRepository {
     public List<Buch> getBuecher() {
         try {
             return buchDao.queryForAll();
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
         return new ArrayList<Buch>();
@@ -60,38 +58,43 @@ public class BlechWikiRepository {
     public void saveOrUpdateKomponist(final Komponist komponist) {
         try {
             this.komponistDao.createOrUpdate(komponist);
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void saveOrUpdateTitel(final Titel titel){
-        try{
-            titelDao.createOrUpdate(titel);
-        }catch (final SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void saveOrUpdateBuch(final Buch buch) {
+    public void saveOrUpdateTitel(final Titel titel) {
         try {
-            this.buchDao.createOrUpdate(buch);
+            titelDao.createOrUpdate(titel);
+        } catch (final SQLException e) {
+            e.printStackTrace();
         }
-        catch (final SQLException e) {
+    }
+
+    public void saveOrUpdateBuch(final Buch... buch) {
+        try {
+            buchDao.callBatchTasks(
+                    new Callable<Void>() {
+                        public Void call() throws SQLException {
+                            for (Buch b : buch) {
+                                buchDao.createOrUpdate(b);
+                            }
+                            return null;
+                        }
+                    });
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void deleteKomponist(final Komponist komponist) {
         try {
-        //    final ForeignCollection<App> apps = komponist.getApps();
-          //  for (final App app : apps) {
-           //     this.buchDao.delete(app);
-           // }
+            //    final ForeignCollection<App> apps = komponist.getApps();
+            //  for (final App app : apps) {
+            //     this.buchDao.delete(app);
+            // }
             this.komponistDao.delete(komponist);
-        }
-        catch (final SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
         }
 
@@ -101,8 +104,7 @@ public class BlechWikiRepository {
         if (null == komponistDao) {
             try {
                 komponistDao = databaseHelper.getKomponistDao();
-            }
-            catch (final SQLException e) {
+            } catch (final SQLException e) {
                 Log.e(LOG_TAG, "Unable to load DAO: " + e.getMessage());
                 e.printStackTrace();
             }
@@ -114,8 +116,7 @@ public class BlechWikiRepository {
         if (null == buchDao) {
             try {
                 buchDao = databaseHelper.getBuchDao();
-            }
-            catch (final SQLException e) {
+            } catch (final SQLException e) {
                 Log.e(LOG_TAG, "Unable to load DAO: " + e.getMessage());
                 e.printStackTrace();
             }
@@ -123,12 +124,11 @@ public class BlechWikiRepository {
         return buchDao;
     }
 
-    private  Dao<Titel, Integer> getTitelDao(final DatabaseHelper databaseHelper){
+    private Dao<Titel, Integer> getTitelDao(final DatabaseHelper databaseHelper) {
         if (null == titelDao) {
             try {
                 titelDao = databaseHelper.getTitelDao();
-            }
-            catch (final SQLException e) {
+            } catch (final SQLException e) {
                 Log.e(LOG_TAG, "Unable to load DAO: " + e.getMessage());
                 e.printStackTrace();
             }

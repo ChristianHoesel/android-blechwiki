@@ -3,6 +3,8 @@ package de.choesel.blechwiki.model;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.j256.ormlite.dao.Dao;
+
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
@@ -13,10 +15,15 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import de.choesel.blechwiki.orm.DatabaseHelper;
 
 /**
  * Created by christian on 06.05.16.
@@ -144,7 +151,7 @@ public final class BlaeserWikiFactory {
         return titelList;
     }
 
-    public static List<Titel> getTitel(final String suchstring) {
+    public static List<Titel> getTitel(final String suchstring, final DatabaseHelper dbHelper) {
         List<Titel> titelList = new ArrayList<>();
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_GET_TITEL);
@@ -185,7 +192,7 @@ public final class BlaeserWikiFactory {
                             Object obj = titel.getProperty("TITEL");
                             if (obj.getClass().equals(SoapPrimitive.class)) {
                                 SoapPrimitive j0 = (SoapPrimitive) titel.getProperty("TITEL");
-                                titelList.addAll(getFundStellen(j0.toString()));
+                                titelList.addAll(getFundStellen(j0.toString(),dbHelper));
                             }
                         }
 
@@ -200,7 +207,7 @@ public final class BlaeserWikiFactory {
     }
 
 
-    public static List<Titel> getFundStellen(final String titelName) {
+    public static List<Titel> getFundStellen(final String titelName, final DatabaseHelper dbHelper) {
         List<Titel> titelListe = new ArrayList<>();
 
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_GET_TITEL_FUNDSTELLE);
@@ -238,7 +245,8 @@ public final class BlaeserWikiFactory {
                     for (int j = 0; j < dataSet.getPropertyCount(); j++) {
                         SoapObject titel = (SoapObject) dataSet.getProperty(j);
 
-                        titelListe.add(new Titel(titel));
+                        //titelListe.add(new Titel(titel));
+                        titelListe.add(createTitel(titel,dbHelper));
                     }
                 }
             }
@@ -284,6 +292,96 @@ public final class BlaeserWikiFactory {
             e.printStackTrace();
         }
         return result;
+    }
+
+    private static Titel createTitel(final SoapObject soapObject, final DatabaseHelper dbHelper) {
+
+        Titel result = new Titel();
+
+        if (soapObject.hasProperty("BuchId")) {
+            Object obj = soapObject.getProperty("BuchId");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("BuchId");
+                //TODO: Referenz zum Buch
+                String buchId = j0.toString();
+
+                try {
+                    Dao<Buch, Integer> buchDao = dbHelper.getBuchDao();
+                    List<Buch> buches = buchDao.queryForEq("buchId", buchId);
+                    for(Buch b : buches) {
+                        result.setBuch(b);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        if (soapObject.hasProperty("TITEL")) {
+            Object obj = soapObject.getProperty("TITEL");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("TITEL");
+                result.setName(j0.toString());
+            }
+        }
+        if (soapObject.hasProperty("Nr")) {
+            Object obj = soapObject.getProperty("Nr");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Nr");
+                result.setNummer( j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("Zus")) {
+            Object obj = soapObject.getProperty("Zus");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Zus");
+                result.setZusatz( j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("Komponist")) {
+            Object obj = soapObject.getProperty("Komponist");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Komponist");
+//                TODO: Refernenz zum Komponisten
+//                    komponist = j0.toString();
+            }
+        }
+
+        if (soapObject.hasProperty("Besetzung")) {
+            Object obj = soapObject.getProperty("Besetzung");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Besetzung");
+                result.setBesetzung(j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("Vorzeich")) {
+            Object obj = soapObject.getProperty("Vorzeich");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Vorzeich");
+                result.setVorzeichen( j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("ImgURL")) {
+            Object obj = soapObject.getProperty("ImgURL");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("ImgURL");
+                try {
+                    result.setImgURL(new URL(j0.toString()));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+
+
+        return  result;
     }
 
 

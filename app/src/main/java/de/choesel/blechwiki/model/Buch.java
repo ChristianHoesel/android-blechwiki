@@ -1,6 +1,7 @@
 package de.choesel.blechwiki.model;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.ksoap2.serialization.KvmSerializable;
@@ -10,6 +11,8 @@ import org.ksoap2.serialization.SoapPrimitive;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -24,7 +27,7 @@ public class Buch implements KvmSerializable {
     @DatabaseField(generatedId = true)
     private UUID id;
 
-    @DatabaseField(canBeNull = true)
+    @DatabaseField(canBeNull = false, uniqueIndex = true)
     private String buchId;
 
     @DatabaseField(canBeNull = true)
@@ -50,6 +53,9 @@ public class Buch implements KvmSerializable {
 
     @DatabaseField(persisterClass = URLType.class)
     private URL imgURL;
+
+    @ForeignCollectionField()
+    private Collection<Titel> stuecke = new ArrayList<>();
 
 
     public Buch() {
@@ -332,5 +338,9 @@ public class Buch implements KvmSerializable {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public Collection<Titel> getStuecke() {
+        return stuecke;
     }
 }

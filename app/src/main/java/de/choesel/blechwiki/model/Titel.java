@@ -19,7 +19,7 @@ import de.choesel.blechwiki.orm.URLType;
  * Created by christian on 05.05.16.
  */
 @DatabaseTable(tableName = "titel")
-public class Titel implements KvmSerializable {
+public class Titel{
 
     @DatabaseField(generatedId = true)
     private UUID id;
@@ -44,6 +44,9 @@ public class Titel implements KvmSerializable {
 
     @DatabaseField(canBeNull = true)
     private String komponist;
+
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    private Buch buch;
 
 
     public Titel() {
@@ -123,103 +126,7 @@ public class Titel implements KvmSerializable {
 
     }
 
-    @Override
-    public Object getProperty(int index) {
-        switch (index) {
-            case 0:
-                return name;
-            case 1:
-                return nummer;
-            case 2:
-                return zusatz;
-            case 3:
-                return komponist;
-            case 4:
-                return vorzeichen;
-            case 5:
-                return besetzung;
-            case 6:
-                return imgURL;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
 
-    @Override
-    public int getPropertyCount() {
-        return 7;
-    }
-
-    @Override
-    public void setProperty(int index, Object value) {
-        switch (index) {
-            case 0:
-                name = value.toString();
-                break;
-            case 1:
-                nummer = value.toString();
-                break;
-            case 2:
-                zusatz = value.toString();
-                break;
-            case 3:
-                komponist = value.toString();
-                break;
-            case 4:
-                vorzeichen = value.toString();
-                break;
-            case 5:
-                besetzung = value.toString();
-                break;
-            case 6:
-                try {
-                    imgURL = new URL(value.toString());
-                } catch (MalformedURLException e) {
-                    //TODO: Fehlerbehandlung
-                    e.printStackTrace();
-                }
-
-            default:
-                throw new IllegalArgumentException();
-        }
-
-    }
-
-    @Override
-    public void getPropertyInfo(int index, Hashtable properties, PropertyInfo info) {
-        switch (index) {
-            case 0:
-                info.type = PropertyInfo.STRING_CLASS;
-                info.name = "TITEL";
-                break;
-            case 1:
-                info.type = PropertyInfo.STRING_CLASS;
-                info.name = "Nr";
-                break;
-            case 2:
-                info.type = PropertyInfo.INTEGER_CLASS;
-                info.name = "Zus";
-                break;
-            case 3:
-                info.type = PropertyInfo.INTEGER_CLASS;
-                info.name = "Komponist";
-                break;
-            case 4:
-                info.type = PropertyInfo.INTEGER_CLASS;
-                info.name = "Besetzung";
-                break;
-            case 5:
-                info.type = PropertyInfo.INTEGER_CLASS;
-                info.name = "Vorzeich";
-                break;
-            case 6:
-                info.type = PropertyInfo.INTEGER_CLASS;
-                info.name = "ImgURL";
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
 
     public UUID getId() {
         return id;
@@ -283,5 +190,13 @@ public class Titel implements KvmSerializable {
 
     public void setKomponist(String komponist) {
         this.komponist = komponist;
+    }
+
+    public Buch getBuch() {
+        return buch;
+    }
+
+    public void setBuch(Buch buch) {
+        this.buch = buch;
     }
 }
