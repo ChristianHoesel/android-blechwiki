@@ -10,4 +10,7 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".BuchFragment"
-    tools:listitem="@layout/fragment_buch" />
+    tools:listitem="@layout/fragment_buch"
+    android:clickable="false"
+    android:layoutMode="opticalBounds"
+    android:touchscreenBlocksFocus="false" />

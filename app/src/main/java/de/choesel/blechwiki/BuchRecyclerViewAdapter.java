@@ -34,9 +34,31 @@ public class BuchRecyclerViewAdapter extends RecyclerView.Adapter<BuchRecyclerVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getBuchId());
-        holder.mContentView.setText(mValues.get(position).getTitel());
+        Buch buch = mValues.get(position);
+        holder.mItem = buch;
+        holder.titelView.setText(buch.getTitel());
+
+        String untertitel = buch.getUntertitel();
+        if(untertitel == null || untertitel.isEmpty()){
+            holder.untertitelView.setVisibility(View.INVISIBLE);
+        }else{
+            holder.untertitelView.setVisibility(View.VISIBLE);
+            holder.untertitelView.setText(untertitel);
+        }
+
+        String verlag = buch.getVerlag();
+        int erscheinjahr = buch.getErscheinjahr();
+        if(verlag == null || verlag.isEmpty()){
+            holder.verlagView.setVisibility(View.INVISIBLE);
+        }else{
+            holder.untertitelView.setVisibility(View.VISIBLE);
+            if(erscheinjahr < 1500){
+                //vorher gab es noch keinen Buchdruck
+                holder.verlagView.setText( verlag);
+            }else{
+                holder.verlagView.setText( verlag+ " ("+erscheinjahr+")");
+            }
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,20 +79,22 @@ public class BuchRecyclerViewAdapter extends RecyclerView.Adapter<BuchRecyclerVi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView titelView;
+        public final TextView untertitelView;
+        public final TextView verlagView;
         public Buch mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            titelView = (TextView) view.findViewById(R.id.buchTitel);
+            untertitelView = (TextView) view.findViewById(R.id.untertitel);
+            verlagView = (TextView)view.findViewById(R.id.verlag);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + titelView.getText() + "'";
         }
     }
 }

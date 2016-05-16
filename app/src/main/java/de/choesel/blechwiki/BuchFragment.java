@@ -1,6 +1,7 @@
 package de.choesel.blechwiki;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -97,6 +98,7 @@ public class BuchFragment extends Fragment {
             buchRecyclerViewAdapter = new BuchRecyclerViewAdapter(new ArrayList<Buch>(), mListener);
 
             recyclerView.setAdapter(buchRecyclerViewAdapter);
+            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),null));
         }
 
         myAsyncTask myRequest = new myAsyncTask();

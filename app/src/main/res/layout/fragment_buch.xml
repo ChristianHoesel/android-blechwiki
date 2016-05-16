@@ -1,20 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:layoutMode="opticalBounds"
+    android:longClickable="false"
+    android:padding="6dp"
+    android:paddingTop="11dp">
 
     <TextView
-        android:id="@+id/id"
+        android:id="@+id/buchTitel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="false"
+        android:layout_margin="4dp"
+        android:text="Buchtitel" />
 
     <TextView
-        android:id="@+id/content"
+        android:id="@+id/untertitel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
-</LinearLayout>
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:singleLine="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/buchTitel"
+        android:layout_alignLeft="@+id/buchTitel"
+        android:layout_margin="4dp"
+        android:text="Untertitel" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/verlag"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="false"
+        android:layout_below="@+id/untertitel"
+        android:layout_alignLeft="@+id/buchTitel"
+        android:text="Verlag" />
+
+</RelativeLayout>
