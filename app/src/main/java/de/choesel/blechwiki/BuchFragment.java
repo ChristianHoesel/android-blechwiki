@@ -12,11 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
+
 import de.choesel.blechwiki.model.BlaeserWikiFactory;
 import de.choesel.blechwiki.model.Buch;
 import de.choesel.blechwiki.orm.BlechWikiRepository;
 import de.choesel.blechwiki.orm.DatabaseHelper;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +38,17 @@ public class BuchFragment extends Fragment {
 
     private class myAsyncTask extends AsyncTask<Void, Void, List<Buch>> {
 
-        DatabaseHelper databaseHelper = new DatabaseHelper(getContext());
+        DatabaseHelper databaseHelper;
+        String suchstring = "";
+
+        private myAsyncTask(String suchstring, Context context) {
+            this.suchstring = suchstring;
+            databaseHelper = new DatabaseHelper(context);
+        }
+
+        private myAsyncTask(Context context) {
+            this("",context);
+        }
 
         @Override
         protected void onPostExecute(List<Buch> result) {
@@ -45,6 +60,23 @@ public class BuchFragment extends Fragment {
         @Override
         protected List<Buch> doInBackground(Void... arg0) {
             BlechWikiRepository blechWikiRepository = new BlechWikiRepository(databaseHelper);
+            if (suchstring != null && !suchstring.isEmpty()) {
+
+                try {
+
+                    Dao<Buch, Integer> buchDao = databaseHelper.getBuchDao();
+                    QueryBuilder<Buch, Integer> buchIntegerQueryBuilder = buchDao.queryBuilder();
+                    Where<Buch, Integer> where = buchIntegerQueryBuilder.where();
+
+                    Where<Buch, Integer> like = where.like("titel", "%"+suchstring+"%");
+
+                    return like.query();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return blechWikiRepository.getBuecher();
+            }
+
             return blechWikiRepository.getBuecher();
         }
     }
@@ -98,13 +130,18 @@ public class BuchFragment extends Fragment {
             buchRecyclerViewAdapter = new BuchRecyclerViewAdapter(new ArrayList<Buch>(), mListener);
 
             recyclerView.setAdapter(buchRecyclerViewAdapter);
-            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),null));
+            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), null));
         }
 
-        myAsyncTask myRequest = new myAsyncTask();
+        myAsyncTask myRequest = new myAsyncTask(getContext());
         myRequest.execute();
 
         return view;
+    }
+
+    public void setSuchstring(final String suchstring) {
+        myAsyncTask myRequest = new myAsyncTask(suchstring,getActivity());
+        myRequest.execute();
     }
 
 

@@ -46,6 +46,7 @@ public class SyncDataPreference extends DialogPreference {
         @Override
         protected Void doInBackground(Void... arg0) {
             int progress = 0;
+
             BlechWikiRepository blechWikiRepository = new BlechWikiRepository(databaseHelper);
             for (Buch b : BlaeserWikiFactory.getBuecher()) {
                 blechWikiRepository.saveOrUpdateBuch(b);

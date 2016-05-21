@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,7 +71,34 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
                         .setAction("Action", null).show();
             }
         });
+        handleIntent(getIntent());
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(final Intent intent){
+        if(Intent.ACTION_SEARCH.equals(intent.getAction())){
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            Log.i("Suchstring",query);
+
+            if(getSupportFragmentManager().getFragments()!=null){
+               for(Fragment f : getSupportFragmentManager().getFragments()){
+                   if(f instanceof BuchFragment){
+                       ((BuchFragment) f).setSuchstring(query);
+                   }
+               }
+            }
+         //  BuchFragment buchFragment = ((BuchFragment)mSectionsPagerAdapter.getItem(0));
+          //  buchFragment.isAdded()
+          // mViewPager.isActivated();
+         //   buchFragment.setSuchstring(query);
+
+        }
     }
 
 
