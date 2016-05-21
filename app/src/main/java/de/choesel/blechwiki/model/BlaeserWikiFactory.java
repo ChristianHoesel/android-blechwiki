@@ -63,7 +63,7 @@ public final class BlaeserWikiFactory {
                     SoapObject dataSet = (SoapObject) property.getPropertySafely("NewDataSet");
                     for (int j = 0; j < dataSet.getPropertyCount(); j++) {
                         SoapObject vBuecher = (SoapObject) dataSet.getProperty(j);
-                        buchList.add(new Buch(vBuecher));
+                        buchList.add(createBuch(vBuecher));
                     }
                 }
             }
@@ -87,7 +87,7 @@ public final class BlaeserWikiFactory {
                     SoapObject dataSet = (SoapObject) property.getPropertySafely("NewDataSet");
                     for (int j = 0; j < dataSet.getPropertyCount(); j++) {
                         SoapObject vBuecher = (SoapObject) dataSet.getProperty(j);
-                        komponistenList.add(new Komponist(vBuecher));
+                        komponistenList.add(createKomponist(vBuecher));
                     }
                 }
             }
@@ -112,16 +112,10 @@ public final class BlaeserWikiFactory {
         httpTransport.debug = true;
         try {
             httpTransport.call(SOAP_ACTION_GET_TITEL, envelope);
-        } catch (HttpResponseException e) {
+        } catch (XmlPullParserException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (XmlPullParserException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } //send request
+        }
         SoapObject result = null;
         try {
             result = (SoapObject) envelope.getResponse();
@@ -167,16 +161,10 @@ public final class BlaeserWikiFactory {
         httpTransport.debug = true;
         try {
             httpTransport.call(SOAP_ACTION_GET_TITEL, envelope);
-        } catch (HttpResponseException e) {
+        } catch (XmlPullParserException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (XmlPullParserException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } //send request
+        }
         SoapObject result = null;
         try {
             result = (SoapObject) envelope.getResponse();
@@ -192,7 +180,7 @@ public final class BlaeserWikiFactory {
                             Object obj = titel.getProperty("TITEL");
                             if (obj.getClass().equals(SoapPrimitive.class)) {
                                 SoapPrimitive j0 = (SoapPrimitive) titel.getProperty("TITEL");
-                                titelList.addAll(getFundStellen(j0.toString(),dbHelper));
+                                titelList.addAll(getFundStellen(j0.toString(), dbHelper));
                             }
                         }
 
@@ -223,16 +211,10 @@ public final class BlaeserWikiFactory {
         httpTransport.debug = true;
         try {
             httpTransport.call(SOAP_ACTION_GET_TITEL_FUNDSTELLE, envelope);
-        } catch (HttpResponseException e) {
+        } catch (XmlPullParserException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (XmlPullParserException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } //send request
+        }
         SoapObject result = null;
         try {
             result = (SoapObject) envelope.getResponse();
@@ -246,7 +228,7 @@ public final class BlaeserWikiFactory {
                         SoapObject titel = (SoapObject) dataSet.getProperty(j);
 
                         //titelListe.add(new Titel(titel));
-                        titelListe.add(createTitel(titel,dbHelper));
+                        titelListe.add(createTitel(titel, dbHelper));
                     }
                 }
             }
@@ -274,22 +256,140 @@ public final class BlaeserWikiFactory {
         httpTransport.debug = true;
         try {
             httpTransport.call(soapAction, envelope);
-        } catch (HttpResponseException e) {
+        } catch (XmlPullParserException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (XmlPullParserException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } //send request
+        }
         SoapObject result = null;
         try {
             result = (SoapObject) envelope.getResponse();
         } catch (SoapFault e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        return result;
+    }
+
+    private static Komponist createKomponist(final SoapObject soapObject) {
+        Komponist result = new Komponist();
+        if (soapObject.hasProperty("Komponist")) {
+            Object obj = soapObject.getProperty("Komponist");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Komponist");
+                result.setName(j0.toString());
+            }
+        }
+        if (soapObject.hasProperty("kurz")) {
+            Object obj = soapObject.getProperty("kurz");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("kurz");
+                result.setKurzname(j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("Geboren")) {
+            Object obj = soapObject.getProperty("Geboren");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Geboren");
+                try {
+                    result.setGeboren(Integer.valueOf(j0.toString()));
+                } catch (NumberFormatException e) {
+                    //TODO: Fehlerbehandlung
+                }
+            }
+        }
+
+        if (soapObject.hasProperty("Gestorben")) {
+            Object obj = soapObject.getProperty("Gestorben");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Gestorben");
+                try {
+                    result.setGestorben(Integer.valueOf(j0.toString()));
+                } catch (NumberFormatException e) {
+                    //TODO: Fehlerbehandlung
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static Buch createBuch(final SoapObject soapObject) {
+        Buch result = new Buch();
+        if (soapObject.hasProperty("BuchId")) {
+            Object obj = soapObject.getProperty("BuchId");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("BuchId");
+                result.setBuchId(  j0.toString());
+            }
+        }
+        if (soapObject.hasProperty("Buch")) {
+            Object obj = soapObject.getProperty("Buch");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Buch");
+                result.setTitel(j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("Untertitel")) {
+            Object obj = soapObject.getProperty("Untertitel");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Untertitel");
+                result.setUntertitel(j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("Erscheinjahr")) {
+            Object obj = soapObject.getProperty("Erscheinjahr");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Erscheinjahr");
+                result.setErscheinjahr(Integer.valueOf(j0.toString()));
+            }
+        }
+
+        if (soapObject.hasProperty("Herausgeber")) {
+            Object obj = soapObject.getProperty("Herausgeber");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Herausgeber");
+                result.setHerausgeber(j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("Herausg_vorname")) {
+            Object obj = soapObject.getProperty("Herausg_vorname");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Herausg_vorname");
+                result.setHerausgeberVorname(j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("VERLAG")) {
+            Object obj = soapObject.getProperty("VERLAG");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("VERLAG");
+                result.setVerlag(j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("Verlagsnummer")) {
+            Object obj = soapObject.getProperty("Verlagsnummer");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Verlagsnummer");
+                result.setVerlagsnummer(j0.toString());
+            }
+        }
+
+        if (soapObject.hasProperty("ImgUrl")) {
+            Object obj = soapObject.getProperty("ImgUrl");
+            if (obj.getClass().equals(SoapPrimitive.class)) {
+                SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("ImgUrl");
+                try {
+                    result.setImgURL(new URL(j0.toString()));
+                } catch (MalformedURLException e) {
+                    //TODO Fehlerbehandlung
+                    e.printStackTrace();
+                }
+            }
         }
         return result;
     }
@@ -308,7 +408,7 @@ public final class BlaeserWikiFactory {
                 try {
                     Dao<Buch, Integer> buchDao = dbHelper.getBuchDao();
                     List<Buch> buches = buchDao.queryForEq("buchId", buchId);
-                    for(Buch b : buches) {
+                    for (Buch b : buches) {
                         result.setBuch(b);
                     }
                 } catch (SQLException e) {
@@ -329,7 +429,7 @@ public final class BlaeserWikiFactory {
             Object obj = soapObject.getProperty("Nr");
             if (obj.getClass().equals(SoapPrimitive.class)) {
                 SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Nr");
-                result.setNummer( j0.toString());
+                result.setNummer(j0.toString());
             }
         }
 
@@ -337,7 +437,7 @@ public final class BlaeserWikiFactory {
             Object obj = soapObject.getProperty("Zus");
             if (obj.getClass().equals(SoapPrimitive.class)) {
                 SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Zus");
-                result.setZusatz( j0.toString());
+                result.setZusatz(j0.toString());
             }
         }
 
@@ -362,7 +462,7 @@ public final class BlaeserWikiFactory {
             Object obj = soapObject.getProperty("Vorzeich");
             if (obj.getClass().equals(SoapPrimitive.class)) {
                 SoapPrimitive j0 = (SoapPrimitive) soapObject.getProperty("Vorzeich");
-                result.setVorzeichen( j0.toString());
+                result.setVorzeichen(j0.toString());
             }
         }
 
@@ -379,9 +479,7 @@ public final class BlaeserWikiFactory {
         }
 
 
-
-
-        return  result;
+        return result;
     }
 
 

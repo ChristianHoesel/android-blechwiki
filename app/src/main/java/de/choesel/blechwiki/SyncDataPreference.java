@@ -55,18 +55,18 @@ public class SyncDataPreference extends DialogPreference {
                 }
             }
 
-            /*
+
             for (Komponist k : BlaeserWikiFactory.getKomponisten()) {
                 blechWikiRepository.saveOrUpdateKomponist(k);
                 publishProgress(k);
                  if(isCancelled()){
                     return null;
                 }
-            }*/
+            }
 
             for (String s : BlaeserWikiFactory.getTitelNamen("")) {
-                Log.d("Titel",s);
-                for (Titel t : BlaeserWikiFactory.getFundStellen(s,databaseHelper)) {
+                Log.d("Titel", s);
+                for (Titel t : BlaeserWikiFactory.getFundStellen(s, databaseHelper)) {
                     blechWikiRepository.saveOrUpdateTitel(t);
                     publishProgress(t);
                     if (isCancelled()) {

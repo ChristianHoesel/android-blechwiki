@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
+        assert mViewPager != null;
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
 
