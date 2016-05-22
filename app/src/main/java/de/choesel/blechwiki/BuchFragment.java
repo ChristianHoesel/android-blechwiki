@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ public class BuchFragment extends Fragment {
 
     private BuchRecyclerViewAdapter buchRecyclerViewAdapter;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout mSwipeView;
 
     private class myAsyncTask extends AsyncTask<Void, Void, List<Buch>> {
 
@@ -55,6 +57,7 @@ public class BuchFragment extends Fragment {
             super.onPostExecute(result);
             databaseHelper.close();
             recyclerView.setAdapter(new BuchRecyclerViewAdapter(result, mListener));
+            mSwipeView.setRefreshing(false);
         }
 
         @Override
@@ -118,10 +121,13 @@ public class BuchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_buch_list, container, false);
 
+
+        View listView = view.findViewById(R.id.list);
+
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            recyclerView = (RecyclerView) view;
+        if (listView instanceof RecyclerView) {
+            Context context = listView.getContext();
+            recyclerView = (RecyclerView) listView;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -133,11 +139,23 @@ public class BuchFragment extends Fragment {
             recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), null));
         }
 
+        if(view instanceof SwipeRefreshLayout){
+            mSwipeView = (SwipeRefreshLayout) view;
+            mSwipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    myAsyncTask myRequest = new myAsyncTask(getContext());
+                    myRequest.execute();
+                }
+            });
+        }
+
         myAsyncTask myRequest = new myAsyncTask(getContext());
         myRequest.execute();
 
         return view;
     }
+
 
     public void setSuchstring(final String suchstring) {
         myAsyncTask myRequest = new myAsyncTask(suchstring,getActivity());
