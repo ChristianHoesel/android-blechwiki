@@ -12,7 +12,7 @@ import de.choesel.blechwiki.orm.URLType;
  * Created by christian on 05.05.16.
  */
 @DatabaseTable(tableName = "titel")
-public class Titel {
+public class Titel{
 
     @DatabaseField(generatedId = true)
     private UUID id;
@@ -112,4 +112,6 @@ public class Titel {
     public void setBuch(Buch buch) {
         this.buch = buch;
     }
+
+
 }

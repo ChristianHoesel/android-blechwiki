@@ -24,13 +24,15 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import java.util.UUID;
+
 import de.choesel.blechwiki.model.Buch;
 import de.choesel.blechwiki.model.Komponist;
 
 public class MainActivity extends AppCompatActivity implements BuchFragment.OnListFragmentInteractionListener, KomponistFragment.OnListFragmentInteractionListener {
 
 
-
+    public static final String BUCH_ID = "BUCH_ID";
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -136,7 +138,9 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
 
     @Override
     public void onListFragmentInteraction(Buch item) {
-
+        Intent intent = new Intent(this, ScrollingBuchActivity.class);
+        intent.putExtra(BUCH_ID,item.getId().toString());
+        startActivity(intent);
     }
 
     @Override
