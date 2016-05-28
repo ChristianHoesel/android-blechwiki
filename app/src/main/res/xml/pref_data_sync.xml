@@ -19,9 +19,6 @@
     </Preference>
 
     <de.choesel.blechwiki.SyncDataPreference android:title="Syncing data now...">
-
-
-
     </de.choesel.blechwiki.SyncDataPreference>
 
 </PreferenceScreen>

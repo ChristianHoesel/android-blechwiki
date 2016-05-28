@@ -38,6 +38,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.choesel.blechwiki.MainActivity" />
         </activity>
+
+        <service
+            android:name=".SynchDataIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
