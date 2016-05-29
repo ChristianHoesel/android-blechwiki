@@ -14,13 +14,13 @@ public class Komponist {
     @DatabaseField(generatedId = true)
     private UUID id;
 
-    @DatabaseField(canBeNull = true)
+    @DatabaseField(canBeNull = true, uniqueCombo = true)
     private String name;
 
     @DatabaseField(canBeNull = true)
     private String kurzname;
 
-    @DatabaseField(canBeNull = true)
+    @DatabaseField(canBeNull = true, uniqueCombo = true)
     private Integer geboren;
 
     @DatabaseField(canBeNull = true)

@@ -26,10 +26,10 @@ public class Titel{
     @DatabaseField(canBeNull = true)
     private String besetzung;
 
-    @DatabaseField(canBeNull = true)
+    @DatabaseField(canBeNull = true, uniqueCombo =  true)
     private String name;
 
-    @DatabaseField(canBeNull = true)
+    @DatabaseField(canBeNull = true, uniqueCombo = true)
     private String nummer;
 
     @DatabaseField(canBeNull = true)
@@ -38,7 +38,7 @@ public class Titel{
     @DatabaseField(canBeNull = true)
     private String komponist;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, uniqueCombo = true)
     private Buch buch;
 
     public UUID getId() {
