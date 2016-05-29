@@ -1,6 +1,8 @@
 package de.choesel.blechwiki;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -12,9 +14,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import de.choesel.blechwiki.model.Titel;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
-public class ScrollingBuchActivity extends AppCompatActivity implements TitelFragment.OnListFragmentInteractionListener{
+import de.choesel.blechwiki.model.Buch;
+import de.choesel.blechwiki.model.Titel;
+import de.choesel.blechwiki.orm.DatabaseHelper;
+
+public class ScrollingBuchActivity extends AppCompatActivity implements TitelFragment.OnListFragmentInteractionListener {
 
     private ViewPager mViewPager;
 
@@ -24,6 +35,29 @@ public class ScrollingBuchActivity extends AppCompatActivity implements TitelFra
         setContentView(R.layout.activity_scrolling_buch);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+
+        Intent intent = getIntent();
+        String buchId = intent.getStringExtra(MainActivity.BUCH_ID);
+
+        DatabaseHelper databaseHelper = new DatabaseHelper(this);
+        if (buchId != null && !buchId.isEmpty()) {
+
+            try {
+                Buch sample = new Buch();
+                sample.setId(UUID.fromString(buchId));
+                Buch buch = databaseHelper.getBuchDao().queryForSameId(sample);
+                //toolbar.setTitle(buch.getTitel());
+                collapsingToolbar.setTitle(buch.getTitel());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +101,7 @@ public class ScrollingBuchActivity extends AppCompatActivity implements TitelFra
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
 
-                    return TitelFragment.newInstance(1);
+            return TitelFragment.newInstance(1);
 
         }
 
@@ -82,10 +116,6 @@ public class ScrollingBuchActivity extends AppCompatActivity implements TitelFra
             switch (position) {
                 case 0:
                     return "Bücher";
-                case 1:
-                    return "Komponisten";
-                case 2:
-                    return "SECTION 3";
             }
             return null;
         }

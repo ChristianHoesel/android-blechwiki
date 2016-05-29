@@ -65,14 +65,6 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         handleIntent(getIntent());
     }
 
@@ -210,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 2;
         }
 
         @Override
@@ -220,8 +212,7 @@ public class MainActivity extends AppCompatActivity implements BuchFragment.OnLi
                     return "Bücher";
                 case 1:
                     return "Komponisten";
-                case 2:
-                    return "SECTION 3";
+
             }
             return null;
         }
