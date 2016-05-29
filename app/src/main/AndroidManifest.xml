@@ -41,7 +41,15 @@
 
         <service
             android:name=".SynchDataIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <receiver android:name=".CancelSynchronisationBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="de.choesel.blechwiki.CancelSynchronisationBroadcastReceiver"></action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

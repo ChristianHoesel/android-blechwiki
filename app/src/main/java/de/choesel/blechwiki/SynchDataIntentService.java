@@ -2,6 +2,7 @@ package de.choesel.blechwiki;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.support.v4.app.NotificationCompat;
@@ -23,6 +24,10 @@ import de.choesel.blechwiki.orm.DatabaseHelper;
  */
 public class SynchDataIntentService extends IntentService {
 
+    public static final int STOP_SYNCH = 20160529;
+
+    private static boolean isStopped = false;
+
 
     public SynchDataIntentService() {
         super("SynchDataIntentService");
@@ -33,6 +38,9 @@ public class SynchDataIntentService extends IntentService {
         context.startService(intent);
     }
 
+    public static void stopSynchronistation() {
+        isStopped = true;
+    }
 
 
     @Override
@@ -47,39 +55,67 @@ public class SynchDataIntentService extends IntentService {
 
             mBuilder.setOngoing(true);
 
-            mBuilder.setProgress(15000,0,false);
-            mNotifyManager.notify(2709,mBuilder.build());
+            Intent stopIntent = new Intent();
+            stopIntent.setAction("de.choesel.blechwiki.CancelSynchronisationBroadcastReceiver");
+            PendingIntent broadcast = PendingIntent.getBroadcast(getApplicationContext(), STOP_SYNCH, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.addAction(R.drawable.ic_close_black_24dp, "Synchronisation abbrechen", broadcast);
+
+            mBuilder.setProgress(15000, 0, false);
+            mNotifyManager.notify(2709, mBuilder.build());
 
             DatabaseHelper databaseHelper = new DatabaseHelper(getApplicationContext());
             BlechWikiRepository blechWikiRepository = new BlechWikiRepository(databaseHelper);
 
             int i = 0;
             for (Buch b : BlaeserWikiFactory.getBuecher()) {
+                if(isStopped){
+                    break;
+                }
                 blechWikiRepository.saveOrUpdateBuch(b);
-                mBuilder.setProgress(15000,i++,false);
-                mNotifyManager.notify(2709,mBuilder.build());
-            }
-
-
-            for (Komponist k : BlaeserWikiFactory.getKomponisten()) {
-                blechWikiRepository.saveOrUpdateKomponist(k);
-                mBuilder.setProgress(15000,i++,false);
-                mNotifyManager.notify(2709,mBuilder.build());
-            }
-
-            for (String s : BlaeserWikiFactory.getTitelNamen("")) {
-                Log.d("Titel", s);
-                for (Titel t : BlaeserWikiFactory.getFundStellen(s, databaseHelper)) {
-                    blechWikiRepository.saveOrUpdateTitel(t);
-                    mBuilder.setProgress(15000,i++,false);
-                    mNotifyManager.notify(2709,mBuilder.build());
+                mBuilder.setProgress(15000, i++, false);
+                mNotifyManager.notify(2709, mBuilder.build());
+                if(isStopped){
+                    break;
                 }
             }
 
 
+            for (Komponist k : BlaeserWikiFactory.getKomponisten()) {
+                if(isStopped){
+                    break;
+                }
+                blechWikiRepository.saveOrUpdateKomponist(k);
+                mBuilder.setProgress(15000, i++, false);
+                mNotifyManager.notify(2709, mBuilder.build());
+                if(isStopped){
+                    break;
+                }
+            }
+
+            for (String s : BlaeserWikiFactory.getTitelNamen("")) {
+                if(isStopped){
+                    break;
+                }
+                for (Titel t : BlaeserWikiFactory.getFundStellen(s, databaseHelper)) {
+                    if(isStopped){
+                        break;
+                    }
+                    blechWikiRepository.saveOrUpdateTitel(t);
+                    mBuilder.setProgress(15000, i++, false);
+                    mNotifyManager.notify(2709, mBuilder.build());
+                    if(isStopped){
+                        break;
+                    }
+                }
+                if(isStopped){
+                    break;
+                }
+            }
+
             databaseHelper.close();
 
             mNotifyManager.cancel(2709);
+            isStopped = false;
         }
     }
 
